@@ -43,6 +43,11 @@ const mongoDB = new MongoDB('mongodb+srv://qotibaeiad98:hrqk7o7dHydnV49a@newtail
       dataHandler.handleRegistrationRequest(mongoDB)(req, res);
     });
 
+    // API endpoint for Save article
+    app.post('api/add-article', (req, res) => {
+      dataHandler.handleRegistrationRequest(mongoDB)(req, res);
+    });
+
     // API endpoint for search
     app.get('/api/search', (req, res) => {
       console.log('search come');
