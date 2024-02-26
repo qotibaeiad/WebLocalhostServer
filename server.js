@@ -32,6 +32,10 @@ const mongoDB = new MongoDB('mongodb+srv://qotibaeiad98:hrqk7o7dHydnV49a@newtail
       dataHandler.getCategoryByUser(mongoDB)(req, res);
     });
 
+    app.get('/api/userdata', (req, res) => {
+      dataHandler.getUserData(mongoDB)(req, res);
+    });
+
     // API endpoint for fetching data
     app.get('/api/data', (req, res) => {
       dataHandler.handleDataRequest(mongoDB)(req, res);

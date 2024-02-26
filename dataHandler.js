@@ -56,10 +56,10 @@ function handleLoginRequest(mongoDB) {
 function handleRegistrationRequest(mongoDB) {
   return async (req, res) => {
     try {
-      const { username, password, email, phone, category } = req.body;
+      const { username, password, email, phone, category,country,jobTitle,bio } = req.body;
 
       // Check if the required fields are present
-      if (!username || !password || !email || !phone || !category) {
+      if (!username || !password || !email || !phone || !category || !country ||! jobTitle || !bio) {
         return res.status(400).json({ success: false, message: 'All fields are required.' });
       }
 
@@ -72,7 +72,7 @@ function handleRegistrationRequest(mongoDB) {
       }
 
       // Insert the new user into the MongoDB collection
-      await userCollection.insertOne({ username, password, email, phone, category });
+      await userCollection.insertOne({ username, password, email, phone, category,country,jobTitle,bio });
 
       res.json({ success: true, message: 'User registered successfully.' });
     } catch (error) {
@@ -177,6 +177,37 @@ function getCategoryByUser(mongoDB){
   }
 }
 
+function getUserData(mongoDB) {
+  return async (req, res) => {
+    try {
+      const { username } = req.query;
+      // Check if the username is provided
+      if (!username) {
+        return res.status(400).json({ error: 'Username is required.' });
+      }
+
+      // Access the 'user' collection from MongoDB
+      const userCollection = mongoDB.db.collection('user');
+
+      // Retrieve user data based on the provided username
+      const userData = await userCollection.findOne({ username });
+
+      // Check if the user exists
+      if (!userData) {
+        return res.status(404).json({ error: 'User not found.' });
+      }
+
+      // Return the user data in the response
+      console.log(userData)
+      res.json({ user: userData });
+    } catch (error) {
+      // Handle any errors that might occur during the process
+      console.error('Error fetching user data from MongoDB:', error.message);
+      res.status(500).json({ error: 'Internal Server Error.' });
+    }
+  };
+}
+
 
 
 module.exports = {
@@ -185,5 +216,6 @@ module.exports = {
   handleRegistrationRequest,
   handleSearchRequest, // Add this line
   getCategoryByUser,
+  getUserData,
 };
 
