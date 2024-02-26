@@ -28,6 +28,10 @@ const mongoDB = new MongoDB('mongodb+srv://qotibaeiad98:hrqk7o7dHydnV49a@newtail
   try {
     await mongoDB.connect();
 
+    app.get('/api/categories', (req, res) => {
+      dataHandler.getCategoryByUser(mongoDB)(req, res);
+    });
+
     // API endpoint for fetching data
     app.get('/api/data', (req, res) => {
       dataHandler.handleDataRequest(mongoDB)(req, res);
@@ -51,6 +55,8 @@ const mongoDB = new MongoDB('mongodb+srv://qotibaeiad98:hrqk7o7dHydnV49a@newtail
   } catch (error) {
     console.error('Error initializing MongoDB:', error.message);
   }
+
+  
 })();
 
 // Start the server

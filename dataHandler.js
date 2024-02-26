@@ -106,11 +106,30 @@ function handleSearchRequest(mongoDB) {
     }
   };
 }
+function getCategoryByUser(mongoDB){
+  return async (req, res) => {
+    try {
+      const {username}=req.query
+      if (!username) {
+        return { error: 'Username is required.' };
+      }
+      const userCollection = mongoDB.db.collection('user');
+      const categories = await userCollection.distinct('category', { username });
+      res.json({ categories });
+    } catch (error) {
+      console.error('Error fetching categories from MongoDB:', error.message);
+      throw error; 
+    }
+  }
+}
+
+
 
 module.exports = {
   handleDataRequest,
   handleLoginRequest,
   handleRegistrationRequest,
   handleSearchRequest, // Add this line
+  getCategoryByUser,
 };
 
