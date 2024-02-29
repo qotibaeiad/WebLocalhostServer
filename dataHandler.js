@@ -208,6 +208,30 @@ function getUserData(mongoDB) {
   };
 }
 
+function updateuserdata(mongoDB) {
+  return async (req, res) => {
+    try {
+      const { username, field, value } = req.body;
+
+      // Update the user data in MongoDB
+      const result = await mongoDB.db.collection('user').updateOne(
+        { username },
+        { $set: { [`${field}`]: value } }
+      );
+
+      // Check if the update was successful
+      if (result.modifiedCount === 1) {
+        res.status(200).json({ success: true, message: 'User data updated successfully' });
+      } else {
+        res.status(404).json({ success: false, message: 'User not found or no data updated' });
+      }
+    } catch (error) {
+      console.error('Error updating user data:', error);
+      res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+  };
+}
+
 
 
 module.exports = {
@@ -217,5 +241,6 @@ module.exports = {
   handleSearchRequest, // Add this line
   getCategoryByUser,
   getUserData,
+  updateuserdata,
 };
 

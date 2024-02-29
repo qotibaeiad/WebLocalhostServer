@@ -65,6 +65,14 @@ const mongoDB = new MongoDB('mongodb+srv://qotibaeiad98:hrqk7o7dHydnV49a@newtail
     console.error('Error initializing MongoDB:', error.message);
   }
 
+  app.post('/api/updateUserData', async (req, res) => {
+    try {
+        await dataHandler.updateuserdata(mongoDB)(req, res);
+    } catch (error) {
+        console.error('Error updating user data:', error);
+        res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+});
   
 })();
 
