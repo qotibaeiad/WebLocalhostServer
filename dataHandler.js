@@ -83,56 +83,6 @@ function handleRegistrationRequest(mongoDB) {
 }
 
 
-async function addArticle(username,title, content, author, category, url) {
-  const apiUrl = serverUrl + '/api/add-article';
-
-  const articleData = {
-    username,
-    title,
-    content,
-    author,
-    category,
-    url,
-  };
-  try {
-    const response = await fetch(apiUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        // You may include additional headers like authentication tokens if required
-      },
-      body: JSON.stringify(articleData),
-    });
-
-    const data = await response.json();
-
-    if (data.success) {
-      console.log('Article added successfully');
-      return true;
-    } else {
-      console.log('Failed to add article');
-      return false;
-    }
-  } catch (error) {
-    console.error('Error during article addition request:', error);
-    return false;
-  }
-}
-
-async function handleArticleAddition(username,title, content, author, category, url) {
-  try {
-    const isArticleAdded = await addArticle(username,title, content, author, category, url);
-    if (isArticleAdded) {
-      alert('Article added successfully');
-      // Additional actions after successful article addition
-    } else {
-      alert('Failed to add article');
-    }
-  } catch (error) {
-    console.error('Error during article addition:', error);
-    alert('An error occurred during article addition');
-  }
-}
 
 
 function handleSearchRequest(mongoDB) {
