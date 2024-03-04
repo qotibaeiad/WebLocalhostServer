@@ -42,6 +42,7 @@ const mongoDB = new MongoDB('mongodb+srv://qotibaeiad98:hrqk7o7dHydnV49a@newtail
 
     // API endpoint for registration
     app.post('/api/register', (req, res) => {
+      console.log('regester');
       dataHandler.handleRegistrationRequest(mongoDB)(req, res);
     });
 
