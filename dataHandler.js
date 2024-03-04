@@ -11,7 +11,7 @@ function handleDataRequest(mongoDB) {
       // Make a request to the News API with the specified category
       const response = await axios.get('https://newsapi.org/v2/top-headlines', {
         params: {
-          apiKey: 'c38e86f6a9bd4caca66306488d7fd739',
+          apiKey: 'e8e4da5b5f57476ca20b100ee8336c59',
           country: 'us',
           category: category,
         },
