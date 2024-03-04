@@ -8,7 +8,6 @@ const port = process.env.PORT || 3000;
 
 // Explicitly set allowed origins
 //app.use(cors({ origin: 'https://newsweb-phi.vercel.app'}));
-https://deplowwebhw2.vercel.app
 app.use(cors({ origin: 'https://deplowwebhw2.vercel.app'}));
 app.use(cors({ origin: 'http://localhost:5173'}));
 
