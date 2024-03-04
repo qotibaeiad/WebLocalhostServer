@@ -7,7 +7,9 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 // Explicitly set allowed origins
-const allowedOrigins = ['https://deplowwebhw2.vercel.app', 'http://localhost:5173'];
+// const allowedOrigins = ['https://deplowwebhw2.vercel.app', 'http://localhost:5173'];
+const allowedOrigins = ['https://deplowwebhw2.vercel.app'];
+
 app.use(cors({ origin: allowedOrigins }));
 
 app.use(express.json());
