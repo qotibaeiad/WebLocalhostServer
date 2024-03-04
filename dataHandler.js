@@ -56,10 +56,10 @@ function handleLoginRequest(mongoDB) {
 function handleRegistrationRequest(mongoDB) {
   return async (req, res) => {
     try {
-      const { username, password, email, phone, category } = req.body;
+      const { username, password, email, phone, category,country,jobTitle,bio } = req.body;
 
       // Check if the required fields are present
-      if (!username || !password || !email || !phone || !category) {
+      if (!username || !password || !email || !phone || !category || !country ||! jobTitle || !bio) {
         return res.status(400).json({ success: false, message: 'All fields are required.' });
       }
 
@@ -72,7 +72,7 @@ function handleRegistrationRequest(mongoDB) {
       }
 
       // Insert the new user into the MongoDB collection
-      await userCollection.insertOne({ username, password, email, phone, category });
+      await userCollection.insertOne({ username, password, email, phone, category,country,jobTitle,bio });
 
       res.json({ success: true, message: 'User registered successfully.' });
     } catch (error) {
@@ -83,6 +83,36 @@ function handleRegistrationRequest(mongoDB) {
 }
 
 
+
+function handleArticleAddRequest(mongoDB) {
+  return async (req, res) => {
+    try {
+      const { username, author, title, description, url, urlToImage, publishedAt } = req.body;
+      console.log('New Article Values:', { username, author, title, description, url, urlToImage, publishedAt });
+
+      // Check if the required fields are present
+      if (!username || !author || !title || !description || !url || !urlToImage || !publishedAt) {
+        return res.status(400).json({ success: false, message: 'All fields are required.' });
+      }
+
+      // Check if the article with the same title already exists
+      const articleCollection = mongoDB.db.collection('article');
+      const existingArticle = await articleCollection.findOne({ title });
+
+      if (existingArticle) {
+        return res.status(400).json({ success: false, message: 'Article with the same title already exists.' });
+      }
+
+      // Insert the new article into the MongoDB collection
+      await articleCollection.insertOne({ username, author, title, description, url, urlToImage, publishedAt });
+
+      res.json({ success: true, message: 'Article added successfully.' });
+    } catch (error) {
+      console.error('Error handling article addition request:', error.message);
+      res.status(500).json({ success: false, error: 'Internal Server Error' });
+    }
+  };
+}
 
 
 function handleSearchRequest(mongoDB) {
@@ -110,11 +140,88 @@ function handleSearchRequest(mongoDB) {
     }
   };
 }
+function getCategoryByUser(mongoDB){
+  return async (req, res) => {
+    try {
+      const {username}=req.query
+      if (!username) {
+        return { error: 'Username is required.' };
+      }
+      const userCollection = mongoDB.db.collection('user');
+      const categories = await userCollection.distinct('category', { username });
+      res.json({ categories });
+    } catch (error) {
+      console.error('Error fetching categories from MongoDB:', error.message);
+      throw error; 
+    }
+  }
+}
+
+function getUserData(mongoDB) {
+  return async (req, res) => {
+    try {
+      const { username } = req.query;
+      // Check if the username is provided
+      if (!username) {
+        return res.status(400).json({ error: 'Username is required.' });
+      }
+
+      // Access the 'user' collection from MongoDB
+      const userCollection = mongoDB.db.collection('user');
+
+      // Retrieve user data based on the provided username
+      const userData = await userCollection.findOne({ username });
+
+      // Check if the user exists
+      if (!userData) {
+        return res.status(404).json({ error: 'User not found.' });
+      }
+
+      // Return the user data in the response
+      console.log(userData)
+      res.json({ user: userData });
+    } catch (error) {
+      // Handle any errors that might occur during the process
+      console.error('Error fetching user data from MongoDB:', error.message);
+      res.status(500).json({ error: 'Internal Server Error.' });
+    }
+  };
+}
+
+function updateuserdata(mongoDB) {
+  return async (req, res) => {
+    try {
+      const { username, field, value } = req.body;
+
+      // Update the user data in MongoDB
+      const result = await mongoDB.db.collection('user').updateOne(
+        { username },
+        { $set: { [`${field}`]: value } }
+      );
+
+      // Check if the update was successful
+      if (result.modifiedCount === 1) {
+        res.status(200).json({ success: true, message: 'User data updated successfully' });
+      } else {
+        res.status(404).json({ success: false, message: 'User not found or no data updated' });
+      }
+    } catch (error) {
+      console.error('Error updating user data:', error);
+      res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+  };
+}
+
+
 
 module.exports = {
   handleDataRequest,
   handleLoginRequest,
   handleRegistrationRequest,
   handleSearchRequest, // Add this line
+  getCategoryByUser,
+  handleArticleAddRequest,
+  getUserData,
+  updateuserdata,
 };
 
