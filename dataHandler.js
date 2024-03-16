@@ -4,6 +4,7 @@ function handleDataRequest(mongoDB) {
   return async (req, res) => {
     try {
       const { category } = req.query;
+      console.log(category)
 
       // Use MongoDB here if needed
       // Example: const dataFromMongoDB = await mongoDB.getData();
