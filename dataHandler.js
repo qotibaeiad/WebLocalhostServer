@@ -144,11 +144,13 @@ function getCategoryByUser(mongoDB){
   return async (req, res) => {
     try {
       const {username}=req.query
+      console.log(11111111)
       if (!username) {
         return { error: 'Username is required.' };
       }
       const userCollection = mongoDB.db.collection('user');
       const categories = await userCollection.distinct('category', { username });
+      console.log(99999999)
       res.json({ categories });
     } catch (error) {
       console.error('Error fetching categories from MongoDB:', error.message);
@@ -212,6 +214,32 @@ function updateuserdata(mongoDB) {
   };
 }
 
+function updateuserpassword(mongoDB) {
+  return async (req, res) => {
+    try {
+      const { email, newPassword } = req.body;
+      console.log(email)
+      console.log(newPassword)
+
+      // Update the user data in MongoDB
+      const result = await mongoDB.db.collection('user').updateOne(
+        { email },
+        { $set: {password: newPassword } }
+      );
+
+      // Check if the update was successful
+      if (result.modifiedCount === 1) {
+        res.status(200).json({ success: true, message: 'User data updated successfully' });
+      } else {
+        res.status(404).json({ success: false, message: 'User not found or no data updated' });
+      }
+    } catch (error) {
+      console.error('Error updating user data:', error);
+      res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+  };
+}
+
 
 
 module.exports = {
@@ -223,5 +251,6 @@ module.exports = {
   handleArticleAddRequest,
   getUserData,
   updateuserdata,
+  updateuserpassword,
 };
 
