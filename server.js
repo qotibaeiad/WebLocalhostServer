@@ -26,8 +26,11 @@ const mongoDB = new MongoDB('mongodb+srv://qotibaeiad98:hrqk7o7dHydnV49a@newtail
   try {
     await mongoDB.connect();
 
-    app.post('/api/updateUserData', (req, res) => {
+    app.post('/api/updateUserPasword', (req, res) => {
       dataHandler.updateuserpassword(mongoDB)(req, res);
+    });
+    app.post('/api/updateUserData', (req, res) => {
+      dataHandler.updateuserdata(mongoDB)(req, res);
     });
     
 
