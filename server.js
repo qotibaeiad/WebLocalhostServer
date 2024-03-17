@@ -33,7 +33,6 @@ const mongoDB = new MongoDB('mongodb+srv://qotibaeiad98:hrqk7o7dHydnV49a@newtail
 
     // Define API endpoints
     app.get('/api/categories', (req, res) => {
-      console.log(66666666)
       dataHandler.getCategoryByUser(mongoDB)(req, res);
     });
 

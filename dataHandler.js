@@ -86,17 +86,17 @@ function handleRegistrationRequest(mongoDB) {
 function handleArticleRemoveRequest(mongoDB) {
   return async (req, res) => {
     try {
-      const { title } = req.body;
-      console.log('Removing Article:', { title });
+      const { username, title } = req.body;
+      console.log('Removing Article:', { username, title });
 
       // Check if the required fields are present
-      if (!title) {
-        return res.status(400).json({ success: false, message: 'Title is required.' });
+      if (!username || !title) {
+        return res.status(400).json({ success: false, message: 'Username and title are required.' });
       }
 
       // Find and remove the article from the MongoDB collection
       const articleCollection = mongoDB.db.collection('article');
-      const deleteResult = await articleCollection.deleteOne({ title });
+      const deleteResult = await articleCollection.deleteOne({ username, title });
 
       // Check if the article was found and deleted
       if (deleteResult.deletedCount === 0) {
@@ -111,20 +111,21 @@ function handleArticleRemoveRequest(mongoDB) {
   };
 }
 
+
 function handleArticleAddRequest(mongoDB) {
   return async (req, res) => {
     try {
-      const { author, title, description, url, urlToImage, publishedAt } = req.body;
-      console.log('New Article Values:', { author, title, description, url, urlToImage, publishedAt });
+      const { username,author, title, description, url, urlToImage, publishedAt } = req.body;
+      console.log('New Article Values:', {username, author, title, description, url, urlToImage, publishedAt });
 
       // Check if the required fields are present
-      if (!author || !title || !description || !url || !urlToImage || !publishedAt) {
+      if (!username || !author || !title || !description || !url || !urlToImage || !publishedAt) {
         return res.status(400).json({ success: false, message: 'All fields are required.' });
       }
 
       // Check if the article with the same title already exists
       const articleCollection = mongoDB.db.collection('article');
-      const existingArticle = await articleCollection.findOne({ title });
+      const existingArticle = await articleCollection.findOne({ username,title });
 
       if (existingArticle) {
         return res.status(400).json({ success: false, message: 'Article with the same title already exists.' });
@@ -173,7 +174,6 @@ function getCategoryByUser(mongoDB){
   return async (req, res) => {
     try {
       const {username}=req.query
-      console.log(11111111)
       if (!username) {
         return { error: 'Username is required.' };
       }
@@ -268,7 +268,6 @@ function updateuserpassword(mongoDB) {
     }
   };
 }
-
 
 
 module.exports = {
