@@ -273,7 +273,6 @@ module.exports = {
   handleArticleRemoveRequest,
   handleArticleAddRequest,
   getUserData,
-  handleFavoriteArticleRequest,
   updateuserdata,
   updateuserpassword,
 };
