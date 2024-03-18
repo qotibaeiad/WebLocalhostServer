@@ -139,23 +139,6 @@ function handleArticleAddRequest(mongoDB) {
   };
 }
 
-function handleFavoriteArticleRequest(mongoDB) {
-  return async (req, res) => {
-    try {
-      const { username } = req.query;
-      console.log('hi from favor func');
-      // Assuming you have a collection named 'articles' in your MongoDB
-      const articles = await mongoDB.db.collection('article').find({ username }).toArray();
-      console.log('-------------');
-      console.log(articles);
-      console.log("--------------");
-      res.json({ articles });
-    } catch (error) {
-      console.error('Error fetching data from MongoDB:', error.message);
-      res.status(500).json({ error: 'Internal Server Error' });
-    }
-  };
-}
 
 
 function handleSearchRequest(mongoDB) {
