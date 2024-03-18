@@ -4,7 +4,6 @@ function handleDataRequest(mongoDB) {
   return async (req, res) => {
     try {
       const { category } = req.query;
-      console.log(category)
 
       // Use MongoDB here if needed
       // Example: const dataFromMongoDB = await mongoDB.getData();
@@ -87,7 +86,6 @@ function handleArticleRemoveRequest(mongoDB) {
   return async (req, res) => {
     try {
       const { username, title } = req.body;
-      console.log('Removing Article:', { username, title });
 
       // Check if the required fields are present
       if (!username || !title) {
@@ -116,7 +114,6 @@ function handleArticleAddRequest(mongoDB) {
   return async (req, res) => {
     try {
       const { username,author, title, description, url, urlToImage, publishedAt } = req.body;
-      console.log('New Article Values:', {username, author, title, description, url, urlToImage, publishedAt });
 
       // Check if the required fields are present
       if (!username || !author || !title || !description || !url || !urlToImage || !publishedAt) {
@@ -131,7 +128,6 @@ function handleArticleAddRequest(mongoDB) {
         return res.status(400).json({ success: false, message: 'Article with the same title already exists.' });
       }
 
-      console.log('insert article');
       // Insert the new article into the MongoDB collection
       await articleCollection.insertOne(req.body);
 
@@ -143,6 +139,23 @@ function handleArticleAddRequest(mongoDB) {
   };
 }
 
+function handleFavoriteArticleRequest(mongoDB) {
+  return async (req, res) => {
+    try {
+      const { username } = req.query;
+      console.log('hi from favor func');
+      // Assuming you have a collection named 'articles' in your MongoDB
+      const articles = await mongoDB.db.collection('article').find({ username }).toArray();
+      console.log('-------------');
+      console.log(articles);
+      console.log("--------------");
+      res.json({ articles });
+    } catch (error) {
+      console.error('Error fetching data from MongoDB:', error.message);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  };
+}
 
 
 function handleSearchRequest(mongoDB) {
@@ -179,7 +192,6 @@ function getCategoryByUser(mongoDB){
       }
       const userCollection = mongoDB.db.collection('user');
       const categories = await userCollection.distinct('category', { username });
-      console.log(99999999)
       res.json({ categories });
     } catch (error) {
       console.error('Error fetching categories from MongoDB:', error.message);
@@ -209,7 +221,6 @@ function getUserData(mongoDB) {
       }
 
       // Return the user data in the response
-      console.log(userData)
       res.json({ user: userData });
     } catch (error) {
       // Handle any errors that might occur during the process
@@ -279,6 +290,7 @@ module.exports = {
   handleArticleRemoveRequest,
   handleArticleAddRequest,
   getUserData,
+  handleFavoriteArticleRequest,
   updateuserdata,
   updateuserpassword,
 };

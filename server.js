@@ -26,8 +26,11 @@ const mongoDB = new MongoDB('mongodb+srv://qotibaeiad98:hrqk7o7dHydnV49a@newtail
   try {
     await mongoDB.connect();
 
-    app.post('/api/updateUserData', (req, res) => {
+    app.post('/api/updateUserPasword', (req, res) => {
       dataHandler.updateuserpassword(mongoDB)(req, res);
+    });
+    app.post('/api/updateUserData', (req, res) => {
+      dataHandler.updateuserdata(mongoDB)(req, res);
     });
     
 
@@ -49,17 +52,19 @@ const mongoDB = new MongoDB('mongodb+srv://qotibaeiad98:hrqk7o7dHydnV49a@newtail
     });
 
     app.post('/api/register', (req, res) => {
-      
       dataHandler.handleRegistrationRequest(mongoDB)(req, res);
     });
 
+    app.get('/api/FavoriteArticle', (req, res) => {
+      console.log('favor');
+      dataHandler.handleFavoriteArticleRequest(mongoDB)(req, res);
+    });
+
     app.post('/api/add-article', (req, res) => {
-      console.log('add article favorit');
       dataHandler.handleArticleAddRequest(mongoDB)(req, res);
     });
 
     app.post('/api/remove-article',(req,res)=>{
-      console.log('remove article favorit');
       dataHandler.handleArticleRemoveRequest(mongoDB)(req, res);
     });
 
