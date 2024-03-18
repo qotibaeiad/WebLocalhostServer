@@ -26,6 +26,20 @@ const mongoDB = new MongoDB('mongodb+srv://qotibaeiad98:hrqk7o7dHydnV49a@newtail
   try {
     await mongoDB.connect();
 
+    app.get('/api/articles/:username', async (req, res) => {
+      const { username } = req.params;
+      console.log(username)
+      try {
+          const articlesCursor = await mongoDB.db.collection('article').find({ username, isFavorite: true });
+          const articles = await articlesCursor.toArray(); // Convert cursor to array
+          console.log(articles)
+          res.json({ articles });
+      } catch (error) {
+          console.error('Error fetching articles:', error);
+          res.status(500).json({ error: 'Internal Server Error' });
+      }
+  });
+
     app.post('/api/updateUserPasword', (req, res) => {
       dataHandler.updateuserpassword(mongoDB)(req, res);
     });
