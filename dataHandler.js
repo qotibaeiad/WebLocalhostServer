@@ -57,6 +57,7 @@ function handleRegistrationRequest(mongoDB) {
   return async (req, res) => {
     try {
       const { username, password, email, phone, category,country,jobTitle,bio } = req.body;
+     
 
       // Check if the required fields are present
       if (!username || !password || !email || !phone || !category || !country ||! jobTitle || !bio) {
@@ -82,14 +83,38 @@ function handleRegistrationRequest(mongoDB) {
   };
 }
 
+function handleArticleRemoveRequest(mongoDB) {
+  return async (req, res) => {
+    try {
+      const { username, title } = req.body;
+
+      // Check if the required fields are present
+      if (!username || !title) {
+        return res.status(400).json({ success: false, message: 'Username and title are required.' });
+      }
+
+      // Find and remove the article from the MongoDB collection
+      const articleCollection = mongoDB.db.collection('article');
+      const deleteResult = await articleCollection.deleteOne({ username, title });
+
+      // Check if the article was found and deleted
+      if (deleteResult.deletedCount === 0) {
+        return res.status(404).json({ success: false, message: 'Article not found.' });
+      }
+
+      res.json({ success: true, message: 'Article removed successfully.' });
+    } catch (error) {
+      console.error('Error handling article removal request:', error.message);
+      res.status(500).json({ success: false, error: 'Internal Server Error' });
+    }
+  };
+}
 
 
 function handleArticleAddRequest(mongoDB) {
   return async (req, res) => {
     try {
-      const { username, author, title, description, url, urlToImage, publishedAt } = req.body;
-      console.log('New Article Values:', { username, author, title, description, url, urlToImage, publishedAt });
-
+      const { username,author, title, description, url, urlToImage, publishedAt } = req.body;
       // Check if the required fields are present
       if (!username || !author || !title || !description || !url || !urlToImage || !publishedAt) {
         return res.status(400).json({ success: false, message: 'All fields are required.' });
@@ -97,14 +122,14 @@ function handleArticleAddRequest(mongoDB) {
 
       // Check if the article with the same title already exists
       const articleCollection = mongoDB.db.collection('article');
-      const existingArticle = await articleCollection.findOne({ title });
+      const existingArticle = await articleCollection.findOne({ username,title });
 
       if (existingArticle) {
         return res.status(400).json({ success: false, message: 'Article with the same title already exists.' });
       }
 
       // Insert the new article into the MongoDB collection
-      await articleCollection.insertOne({ username, author, title, description, url, urlToImage, publishedAt });
+      await articleCollection.insertOne(req.body);
 
       res.json({ success: true, message: 'Article added successfully.' });
     } catch (error) {
@@ -113,6 +138,7 @@ function handleArticleAddRequest(mongoDB) {
     }
   };
 }
+
 
 
 function handleSearchRequest(mongoDB) {
@@ -178,10 +204,8 @@ function getUserData(mongoDB) {
       }
 
       // Return the user data in the response
-      console.log(userData)
       res.json({ user: userData });
     } catch (error) {
-      coms
       // Handle any errors that might occur during the process
       console.error('Error fetching user data from MongoDB:', error.message);
       res.status(500).json({ error: 'Internal Server Error.' });
@@ -213,6 +237,31 @@ function updateuserdata(mongoDB) {
   };
 }
 
+function updateuserpassword(mongoDB) {
+  return async (req, res) => {
+    try {
+      const { email, newPassword } = req.body;
+      console.log(email)
+      console.log(newPassword)
+
+      // Update the user data in MongoDB
+      const result = await mongoDB.db.collection('user').updateOne(
+        { email },
+        { $set: {password: newPassword } }
+      );
+
+      // Check if the update was successful
+      if (result.modifiedCount === 1) {
+        res.status(200).json({ success: true, message: 'User data updated successfully' });
+      } else {
+        res.status(404).json({ success: false, message: 'User not found or no data updated' });
+      }
+    } catch (error) {
+      console.error('Error updating user data:', error);
+      res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+  };
+}
 
 
 module.exports = {
@@ -221,8 +270,9 @@ module.exports = {
   handleRegistrationRequest,
   handleSearchRequest, // Add this line
   getCategoryByUser,
+  handleArticleRemoveRequest,
   handleArticleAddRequest,
   getUserData,
   updateuserdata,
+  updateuserpassword,
 };
-
